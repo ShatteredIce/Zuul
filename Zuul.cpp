@@ -17,6 +17,7 @@ struct Player {
 //Item variables
 struct Item {
   char name[81];
+  char desc[81];
   char tag[81];
   Room* currentRoom;
   int damage;
@@ -40,10 +41,17 @@ int main()
   //Create the rooms
   Room* inventory = new Room(0, "inventory");
   Room* test = new Room(1, "random description");
+  Room* hangar1 = new Room(1, "You are to the left of the hangar entrance");
+  Room* hangar2 = new Room(2, "You are at the hangar entrance");
+  Room* hangar3 = new Room(3, "You are to the right of the hangar entrance");
+  Room* hangar4 = new Room(4, "You are on the far left wing of the left loading bay"); 
+  
+  //Add rooms to vector
+  rooms.push_back(inventory);
   rooms.push_back(test);
 
-  addItem(allItemsPointer, "test item", "my tag", test, 8, 6);
-  addItem(allItemsPointer, "itens", "fri", test, 0, -1);
+  addItem(allItemsPointer, "test item", "desc", "my tag", test, 8, 6);
+  addItem(allItemsPointer, "itens", "desc2", "fri", test, 0, -1);
 
   //Create the player
   Player player;
@@ -62,9 +70,10 @@ int main()
   return 0;
 }
 
-void addItem(vector<Item>* allItems, char* newName, char* newTag, Room* startingRoom, int newDamage, int newDefense){
+void addItem(vector<Item>* allItems, char* newName, char* newDesc, char* newTag, Room* startingRoom, int newDamage, int newDefense){
   Item item;
   strcpy(item.name, newName);
+  strcpy(item.desc, newDesc);
   strcpy(item.tag, newTag);
   item.currentRoom = startingRoom;
   item.damage = newDamage;
