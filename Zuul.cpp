@@ -36,9 +36,21 @@ struct Player {
 void addItem(vector<Item>*, char*, char*, Room*, int, int);
 void addRoom(vector<Room*>*, int, char*);
 Hostile* getClosestEnemy(Room* myRoom, Hostile* droid1, Hostile* droid2, Hostile* droid3, Hostile* droid4);
+void trimWhitespace(char* text);
 
 int main()
 {
+
+  //Setup variables
+  int numHostiles = 4;
+  bool running = true;
+  char input[81];
+  char quit[5];
+  strcpy(quit, "quit");
+  // char yes[4];
+  // strcpy(yes, "yes");
+  // char no[3];
+  // strcpy(no, "no");
 
   //Item vector
   vector<Item> allItems;
@@ -156,6 +168,25 @@ int main()
   for(int a = 0; a < rooms.size(); a++){
     cout << rooms[a]->getId() << " " << rooms[a]->getDesc() << endl;
     }*/
+
+  //get user input while game is running
+  while(running){
+    fill(input, input + 81, ' ');
+    cout << "Enter action: ";
+    cin.getline(input, 81);
+    trimWhitespace(input);
+    //if input = quit, prompt user if they want to exit the game
+    if(strcmp(input, quit) == 0){
+      fill(input, input + 81, ' ');
+      cout << "Are you sure you want to quit? (y/n): ";
+      cin.getline(input, 81);
+      trimWhitespace(input);
+      if(strcmp(input, "yes") == 0 || strcmp(input, "y") == 0){
+	running = false;
+	cout << "Program terminated." << endl;
+      }
+    }
+  }
   
   return 0;
 }
@@ -260,3 +291,22 @@ Hostile* getClosestEnemy(Room* myRoom, Hostile* droid1, Hostile* droid2, Hostile
   }
 }
 
+//remove extra whitespaces to make sure string compares function as intended
+void trimWhitespace(char* text){
+  char* newText = text;
+  char lastChar = ' ';
+  while(*text != '\0'){
+    if(!(*text == ' ' && lastChar == ' ')){
+      *newText = *text;
+      lastChar = *text;
+      newText++;
+    }
+    text++;
+  }
+  if(*(newText-1) != ' '){
+    *newText = '\0';
+  }
+  else{
+    *(newText-1) = '\0';
+  }
+}
