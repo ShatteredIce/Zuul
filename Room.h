@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string.h>
+#include <map>
 
 using namespace std;
 
@@ -10,7 +11,10 @@ class Room {
   Room(int, char*);
   int getId();
   char* getDesc();
+  void setExit(int direction, Room* exit);
+  Room* getExit(int exit);
  protected:
   int id;
   char* desc;
+  map<int, Room*> movementMap;
 };

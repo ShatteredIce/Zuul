@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include "Room.h"
+#include <map>
 
 using namespace std;
 
@@ -36,6 +37,8 @@ struct Player {
 void addItem(vector<Item>*, char*, char*, Room*, int, int);
 void addRoom(vector<Room*>*, int, char*);
 Hostile* getClosestEnemy(Room* myRoom, Hostile* droid1, Hostile* droid2, Hostile* droid3, Hostile* droid4);
+void getInput(char* text);
+void parseInput(char* text, char* command, char* object);
 void trimWhitespace(char* text);
 
 int main()
@@ -45,12 +48,17 @@ int main()
   int numHostiles = 4;
   bool running = true;
   char input[81];
+  char command[81];
+  char object[81];
   char quit[5];
   strcpy(quit, "quit");
   // char yes[4];
   // strcpy(yes, "yes");
   // char no[3];
   // strcpy(no, "no");
+
+  //Create the map linking room exits
+  map <int, Room*> movementMap;
 
   //Item vector
   vector<Item> allItems;
@@ -171,10 +179,10 @@ int main()
 
   //get user input while game is running
   while(running){
-    fill(input, input + 81, ' ');
-    cout << "Enter action: ";
-    cin.getline(input, 81);
-    trimWhitespace(input);
+    getInput(input);
+    parseInput(input, command, object);
+    cout << "command: " << command << endl;
+    cout << "object: " << object << endl;
     //if input = quit, prompt user if they want to exit the game
     if(strcmp(input, quit) == 0){
       fill(input, input + 81, ' ');
@@ -189,6 +197,31 @@ int main()
   }
   
   return 0;
+}
+
+void getInput(char* text){
+  fill(text, text + 81, ' ');
+  cout << "Enter action: ";
+  cin.getline(text, 81);
+  trimWhitespace(text);
+  for(int i = 0; i < strlen(text); i++){
+    text[i] = tolower(text[i]);
+  }
+}
+
+void parseInput(char* text, char* command, char* object){
+  while(*text != ' ' && *text != '\0'){
+    *command = *text;
+    command++;
+    text++;
+  }
+  *command = '\0';
+  while(*text != '\0'){
+    *object = *text;
+    object++;
+    text++;
+  }
+  *object = '\0';
 }
 
 void addItem(vector<Item>* allItems, char* newName, char* newDesc, char* newTag, Room* startingRoom, int newDamage, int newDefense){

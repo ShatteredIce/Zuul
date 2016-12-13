@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string.h>
 #include "Room.h"
+#include <map>
 
 using namespace std;
 
@@ -11,6 +12,20 @@ Room::Room(int newId, char* newDesc){
   desc = newDesc;
 }
 
+void Room::setExit(int direction, Room* newExit){
+  movementMap[direction] = newExit;
+}
+
+Room* Room::getExit(int direction){
+  map<int, Room*>::iterator iter;
+  iter = movementMap.find(direction);
+  if (iter != mymap.end()){
+    return movementMap.find(direction)->second;
+  }
+  else{
+    return NULL;
+  }
+}
 
 int Room::getId() {
   return id;
