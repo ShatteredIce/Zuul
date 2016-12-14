@@ -19,7 +19,7 @@ void Room::setExit(int direction, Room* newExit){
 Room* Room::getExit(int direction){
   map<int, Room*>::iterator iter;
   iter = movementMap.find(direction);
-  if (iter != mymap.end()){
+  if (iter != movementMap.end()){
     return movementMap.find(direction)->second;
   }
   else{

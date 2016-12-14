@@ -52,6 +52,17 @@ int main()
   char object[81];
   char quit[5];
   strcpy(quit, "quit");
+  char move[5];
+  strcpy(move, "move");
+  char north[6];
+  strcpy(north, "north");
+  char east[5];
+  strcpy(east, "east");
+  char south[6];
+  strcpy(south, "south");
+  char west[5];
+  strcpy(west, "west");
+  int movementDirection = 0;
   // char yes[4];
   // strcpy(yes, "yes");
   // char no[3];
@@ -99,7 +110,16 @@ int main()
   Room* hangar27 = new Room(27, "You are on the upper wing of the right loading bay.");
   Room* hangar28 = new Room(28, "You are in the control tower of the right loading bay.");
   Room* ship = new Room(29, "You are in your light interceptor");
-  
+
+  //Assign exits to rooms
+  hangar1->setExit(1, hangar7);
+  hangar1->setExit(2, hangar2);
+  hangar2->setExit(1, hangar8);
+  hangar2->setExit(2, hangar3);
+  hangar2->setExit(4, hangar1);
+  hangar3->setExit(1, hangar9);
+  hangar3->setExit(4, hangar2);
+
   //Add rooms to vector
   rooms.push_back(inventory);
   rooms.push_back(test);
@@ -181,8 +201,6 @@ int main()
   while(running){
     getInput(input);
     parseInput(input, command, object);
-    cout << "command: " << command << endl;
-    cout << "object: " << object << endl;
     //if input = quit, prompt user if they want to exit the game
     if(strcmp(input, quit) == 0){
       fill(input, input + 81, ' ');
@@ -192,6 +210,33 @@ int main()
       if(strcmp(input, "yes") == 0 || strcmp(input, "y") == 0){
 	running = false;
 	cout << "Program terminated." << endl;
+      }
+    }
+    else if(strcmp(command, move) == 0){
+      movementDirection = 0;
+      cout << object << endl;
+      if(strcmp(object, north) == 0 && player.currentRoom->getExit(1) != NULL){
+	movementDirection = 1;
+	player.currentRoom = player.currentRoom->getExit(1);
+	cout << player.currentRoom->getDesc() << endl;; 
+      }
+      else if(strcmp(object, east) == 0 && player.currentRoom->getExit(2) != NULL){
+	movementDirection = 2;
+	player.currentRoom = player.currentRoom->getExit(2);
+	cout << player.currentRoom->getDesc() << endl;
+      }
+      else if(strcmp(object, south) == 0 && player.currentRoom->getExit(3) != NULL){
+	movementDirection = 3;
+	player.currentRoom = player.currentRoom->getExit(3);
+	cout << player.currentRoom->getDesc() << endl;
+      }
+      else if(strcmp(object, west) == 0 && player.currentRoom->getExit(4) != NULL){
+	movementDirection = 4;
+	player.currentRoom = player.currentRoom->getExit(4);
+	cout << player.currentRoom->getDesc() << endl;
+      }
+      else{
+	cout << "You cannot move in that direction.\n";
       }
     }
   }
@@ -216,6 +261,9 @@ void parseInput(char* text, char* command, char* object){
     text++;
   }
   *command = '\0';
+  if(*text == ' '){
+    text++;
+  }
   while(*text != '\0'){
     *object = *text;
     object++;
