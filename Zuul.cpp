@@ -37,6 +37,7 @@ struct Player {
   Hostile* closestEnemy;
 };
 
+//Function prototypes
 void addItem(vector<Item>*, char*, char*, char*, Room*, int, int);
 void addRoom(vector<Room*>*, int, char*);
 Hostile* getClosestEnemy(Room* myRoom, Hostile* droid1, Hostile* droid2, Hostile* droid3, Hostile* droid4);
@@ -56,10 +57,13 @@ int main()
   bool foundItem = false;
   int hit = 0;
   int gunHeat = 0;
+  int movementDirection = 0;
+  //Input variables
   char input[81];
   char command[81];
   char object[81];
   char quit[5];
+  //General commands
   strcpy(quit, "quit");
   char move[5];
   strcpy(move, "move");
@@ -85,11 +89,6 @@ int main()
   strcpy(exit, "exit");
   char help[5];
   strcpy(help, "help");
-  int movementDirection = 0;
-  // char yes[4];
-  // strcpy(yes, "yes");
-  // char no[3];
-  // strcpy(no, "no");
 
   //Create the map linking room exits
   map <int, Room*> movementMap;
@@ -299,16 +298,7 @@ int main()
   player.closestEnemy = getClosestEnemy(player.currentRoom, droidPointer1, droidPointer2, droidPointer3, droidPointer4);
   Player* playerPointer = & player;
 
-  /*for(int a = 0; a < allItems.size(); a++){
-    cout << allItems[a].name << " " << allItems[a].tag << " " << (allItems[a].currentRoom)->getId() << " " << allItems[a].defense << endl;
-  }
-
-  for(int a = 0; a < rooms.size(); a++){
-    cout << rooms[a]->getId() << " " << rooms[a]->getDesc() << endl;
-    }*/
-
-
-  //print the introduction to the game
+  //Print the introduction to the game
   cout << "You are a pilot of the Lunar Federation.\n";
   cout << "You were assigned a mission to retrieve a mineral sample from an outpost of the planetoid X-120 in the Ymir system.\n";
   cout << "Upon entry into Ymir space, you were ambushed by a droid assault ship.\n";
@@ -345,6 +335,7 @@ int main()
 	cout << "Program terminated." << endl;
       }
     }
+    //if input = help, print the command words
     else if(strcmp(input, "help") == 0){
       cout << "General commands: MOVE, TAKE, DROP, INVENTORY, USE, EXAMINE, HELP, or QUIT\n";
       cout << "You can ENTER or EXIT your light interceptor.";
@@ -353,6 +344,7 @@ int main()
       }
       displayRoom(playerPointer, allItemsPointer, droidPointer1, droidPointer2, droidPointer3, droidPointer4);
     }
+    //if input  = inventory, print the player's inventory
     else if(strcmp(input, "inventory") == 0){
       cout << "-----Your inventory-----\n";
       for(int i = 0; i < allItems.size(); i++){
@@ -361,6 +353,7 @@ int main()
 	}
       }
     }
+    //if command = take, attempt to take the item the player specified
     else if(strcmp(command, take) == 0){
       foundItem = false;
       for(int i = 0; i < allItems.size(); i++){
@@ -370,10 +363,12 @@ int main()
 	  foundItem = true;
 	}
       }
+      //if the specified item was not found
       if(foundItem == false){
 	cout << "You cannot take that item.\n";
       }
     }
+    //if command = drop, attempt to drop the item the player specified
     else if(strcmp(command, drop) == 0){
       foundItem = false;
       for(int i = 0; i < allItems.size(); i++){
@@ -383,10 +378,12 @@ int main()
 	  foundItem = true;
 	}
       }
+      //if the specified item was not found
       if(foundItem == false){
 	cout << "You cannot drop that item.";
       }
     }
+    //if command = examine, attempt to examine the item the player specified
     else if(strcmp(command, examine) == 0){
       foundItem = false;
       for(int i = 0; i < allItems.size(); i++){
@@ -395,20 +392,25 @@ int main()
 	  foundItem = true;
 	}
       }
+      //if the specified item was not found
       if(foundItem == false){
 	cout << "You cannot examine that item.";
       }
     }
+    //if command = use, use item that the player specified
     else if(strcmp(command, use) == 0){
       foundItem = false;
       for(int i = 0; i < allItems.size(); i++){
 	if(strcmp(object, allItems[i].name) == 0 && allItems[i].currentRoom->getId() == 0){
+	  //use music box
 	  if(strcmp(allItems[i].name, "music box") == 0){
 	    cout << "You open up the ancient music box. It starts playing the soviet national anthem.\n";
 	  }
+	  //if player is in their ship, they cannot use the grenade or their laser pistol
 	  else if(player.currentRoom->getId() == 29){
 	    cout << "You cannot use that in here.\n";
 	  }
+	  //use the emp grenade
 	  else if(strcmp(allItems[i].name, "emp grenade") == 0){
 	    if(numHostiles > 0){
 	      cout << "You throw the emp grenade at the nearest droid, causing it to short-circuit.\n";
@@ -419,10 +421,12 @@ int main()
 	      cout << endl;
 	      hostileActions(playerPointer, numHostiles);
 	    }
+	    //if all the droids are dead and the player attempts to use the emp grenade
 	    else{
 	      cout << "You have defeated all the droids in the hangar. You have no more use of this item.\n";
 	    }
 	  }
+	  //use the laser pistol
 	  else if(strcmp(object, "laser pistol") == 0){
 	    if(gunHeat >= 5){
 	      cout << "Your laser pistol is too hot to be used right now.\n";
@@ -442,6 +446,7 @@ int main()
 	      else{
 		cout << "The laser bolt misses the droid.\n";
 	      }
+	      //if the player manages to kill the droid with their shot
 	      if(player.closestEnemy->hp <= 0){
 		cout << "The droid explodes in a shower of sparks.\n";
 		player.closestEnemy->isAlive = false;
@@ -451,20 +456,24 @@ int main()
 	      cout << endl;
 	      hostileActions(playerPointer, numHostiles);
 	    }
+	    //if all the droids are dead and the player attempts to use the laser pistol
 	    else{
 	      cout << "You have defeated all the droids in the hangar. You fire at the wall, doing no damage.\n";
 	    }
 	  }
+	  //if item does not have a use
 	  else{
 	    cout << "You cannot find a use for this item." << endl;
 	  }
 	  foundItem = true;
 	}
       }
+      //if specified item was not in their inventory
       if(foundItem == false){
 	cout << "You do not have this item.\n";
       }
     }
+    //enter the player's ship 
     else if(strcmp(command, enter) == 0){
       if(player.currentRoom->getId() == 13 && (strcmp(object, "ship") == 0 || strcmp(object, "light interceptor") == 0 || strcmp(object, "interceptor") == 0)){
 	cout << "\nYou enter your light interceptor.\n";
@@ -476,6 +485,7 @@ int main()
 	cout << "Invalid command.\n";
       }
     }
+    //exit the player's ship
     else if(strcmp(command, exit) == 0){
       if(player.currentRoom->getId() == 29 && (strcmp(object, "ship") == 0 || strcmp(object, "light interceptor") == 0 || strcmp(object, "interceptor") == 0)){
 	cout << "\nYou exit your light interceptor.\n";
@@ -487,20 +497,24 @@ int main()
 	cout << "Invalid command.\n";
       }
     }
+    //end the game
     else if(strcmp(input, "takeoff") == 0 && player.currentRoom->getId() == 29){
       cout << "You fly off into space and leave the hangar behind.\n";
       foundItem = false;
       for(int i = 0; i < allItems.size(); i++){
+	//if player has the mineral sample, say they won the game
 	if(strcmp(allItems[i].name, "mineral sample") == 0 && (allItems[i].currentRoom->getId() == 0 || allItems[i].currentRoom->getId() == 29)){
 	  cout << "\nYou have succesfully retrieved the mineral sample. Mission Complete!\n\n";
 	  foundItem = true;
 	}
       }
+      //if player does not have the mineral sample, say they lost the game
       if(foundItem == false){
 	cout << "\nThe mineral sample falls into enemy hands. Mission Failed.\n\n";
       }
       running = false;
     }
+    //print out the ship's log
     else if(strcmp(input, "log") == 0 && player.currentRoom->getId() == 29){
       cout << "\n-----Starship Navigation Computer-----\n\n";
       cout << "LOCATION: Planetoid X-120; Ymir System\n\n";
@@ -509,9 +523,11 @@ int main()
       cout << "-Sustainined critical damage to central energy cell. Weapon systems offline.\n";
       cout << "-Minor damage to right airfoil.\n\n";
     }
+    //attempt to shoot all the droids in the room 
     else if(strcmp(input, "shoot") == 0 && player.currentRoom->getId() == 29){
       foundItem = false;
       for(int i = 0; i < allItems.size(); i++){
+	//if the player has the energy cell, kill off all the droids
 	if(strcmp(allItems[i].name, "energy cell") == 0 && allItems[i].currentRoom->getId() == 0){
 	  foundItem = true;
 	  allItems[i].currentRoom = usedItems;
@@ -537,12 +553,15 @@ int main()
 	  }
 	}	
       }
+      //if the player does not have the energy cell
       if(foundItem == false){
 	cout << "The weapon systems are down.\n";
       }
     }
+    //move to an adjacent room
     else if(strcmp(command, move) == 0){
       movementDirection = 0;
+      //move north
       if(strcmp(object, north) == 0 && player.currentRoom->getExit(1) != NULL){
 	movementDirection = 1;
 	player.currentRoom = player.currentRoom->getExit(1);
@@ -552,6 +571,7 @@ int main()
 	  gunHeat--;
 	}
       }
+      //move east
       else if(strcmp(object, east) == 0 && player.currentRoom->getExit(2) != NULL){
 	movementDirection = 2;
 	player.currentRoom = player.currentRoom->getExit(2);
@@ -561,6 +581,7 @@ int main()
 	  gunHeat--;
 	}
       }
+      //move south
       else if(strcmp(object, south) == 0 && player.currentRoom->getExit(3) != NULL){
 	movementDirection = 3;
 	player.currentRoom = player.currentRoom->getExit(3);
@@ -570,6 +591,7 @@ int main()
 	  gunHeat--;
 	}
       }
+      //move west
       else if(strcmp(object, west) == 0 && player.currentRoom->getExit(4) != NULL){
 	movementDirection = 4;
 	player.currentRoom = player.currentRoom->getExit(4);
@@ -586,6 +608,7 @@ int main()
     else{
       cout << "Invalid command.\n";
     }
+    //if the player hp falls to 0
     if(player.hp <= 0){
       cout << "\nYou died!\n\n";
       running = false;
@@ -595,6 +618,7 @@ int main()
   return 0;
 }
 
+//gets the user input from the console
 void getInput(char* text){
   fill(text, text + 81, ' ');
   cout << "------------------------";
@@ -606,6 +630,8 @@ void getInput(char* text){
   }
 }
 
+//splits the input into a command word and an object
+//command = the first word typed, object = everything else
 void parseInput(char* text, char* command, char* object){
   while(*text != ' ' && *text != '\0'){
     *command = *text;
@@ -624,6 +650,7 @@ void parseInput(char* text, char* command, char* object){
   *object = '\0';
 }
 
+//add an item to the game
 void addItem(vector<Item>* allItems, char* newName, char* newDesc, char* newTag, Room* startingRoom, int newDamage, int newDefense){
   Item item;
   strcpy(item.name, newName);
@@ -635,6 +662,7 @@ void addItem(vector<Item>* allItems, char* newName, char* newDesc, char* newTag,
   allItems->push_back(item);
 }
 
+//gets the closest enemy to the player
 Hostile* getClosestEnemy(Room* myRoom, Hostile* droid1, Hostile* droid2, Hostile* droid3, Hostile* droid4){
   if(myRoom->getId() == 11 || myRoom->getId() == 12 || myRoom->getId() == 10){
     if(droid2->isAlive){
@@ -744,8 +772,10 @@ void trimWhitespace(char* text){
   }
 }
 
+//displays the room
 void displayRoom(Player* player, vector<Item>* allItems, Hostile* droid1, Hostile* droid2, Hostile* droid3, Hostile* droid4){
   cout << endl << player->currentRoom->getDesc() << endl;
+  //prints room exits
   cout << "Movement directions:";
   if(player->currentRoom->getExit(1) != NULL){
     cout << " NORTH";
@@ -762,6 +792,7 @@ void displayRoom(Player* player, vector<Item>* allItems, Hostile* droid1, Hostil
   if(player->currentRoom->getId() == 29){
     cout << " EXIT";
   }
+  //print items in the room
   cout << endl;
   for(int i = 0; i < allItems->size(); i++){
     if(player->currentRoom->getId() == allItems->at(i).currentRoom->getId()){
@@ -769,6 +800,7 @@ void displayRoom(Player* player, vector<Item>* allItems, Hostile* droid1, Hostil
     }
   }
   cout << endl;
+  //print messages for rooms with a battle droid or the landing pad
   if(player->currentRoom->getId() == 13){
     cout << "You may enter your light interceptor from here.\n\n"; 
   }
@@ -799,6 +831,7 @@ void displayRoom(Player* player, vector<Item>* allItems, Hostile* droid1, Hostil
   player->closestEnemy = getClosestEnemy(player->currentRoom, droid1, droid2, droid3, droid4);
 }
 
+//remaining droids shoot the player after every move
 void hostileActions(Player* player, int numHostiles){
   int move = 0;
   int hit = 0;

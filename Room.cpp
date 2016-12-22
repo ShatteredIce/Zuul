@@ -12,10 +12,13 @@ Room::Room(int newId, char* newDesc){
   desc = newDesc;
 }
 
+//assigns an exit to the room
 void Room::setExit(int direction, Room* newExit){
   movementMap[direction] = newExit;
 }
 
+//gets the exit, or returns null if there is no exit in that direction
+//direction: north = 1, east = 2, south = 3, west = 4
 Room* Room::getExit(int direction){
   map<int, Room*>::iterator iter;
   iter = movementMap.find(direction);
