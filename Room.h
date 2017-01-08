@@ -5,6 +5,7 @@
 using namespace std;
 
 //Header file for Room.cpp
+//Stores values: id (int), description (char*), and exits (map)
 
 class Room {
  public:
